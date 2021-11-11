@@ -11,7 +11,6 @@ namespace HW._09.Task1
             person.name = "Darya Norko";
             person.houseOfPerson = smallApartment;
             person.ShowData();
-
         }
     }
 }

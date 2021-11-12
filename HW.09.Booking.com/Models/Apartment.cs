@@ -13,14 +13,14 @@ namespace HW._09.Booking.com.Models
         public Hotel hotel;
 
         public DateTime [] freeDates = CreateFreeDates();         
-        public Apartment(int guest, double pricePerPerson, bool isBathInTheRoom = false)
+        public Apartment(int guest, double pricePerPerson, bool isBathInTheRoom = false) // Конструктор для создания номера в отеле или хостеле.
         {
             Guest = guest;
             isBathInTheRoom = _isBathInTheRoom;
             freeDates = CreateFreeDates();
             PricePerPerson = pricePerPerson;
         }
-        public Apartment(int guest, double pricePerPerson)
+        public Apartment(int guest, double pricePerPerson) // Констуктор для создания квартиры.
         {
             Guest = guest;
             freeDates = CreateFreeDates();
@@ -40,18 +40,20 @@ namespace HW._09.Booking.com.Models
 
             DateTime[] freeDates = new DateTime[15];
             Random random = new();
+
             int day;
             int month;
             int year;
+
             for (int i = 0; i < freeDates.Length; i++)
             {
                 DateTime dateNow = DateTime.Now;
 
-                day = random.Next(0, 31);
+                day = random.Next(1, 31);
                 month = dateNow.Month;
-                year = random.Next(dateNow.Year);
+                year = dateNow.Year;
 
-                freeDates[i] = new DateTime(day, month, year);
+                freeDates[i] = new DateTime(year, month, day);
             }
             return freeDates;
         }

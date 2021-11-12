@@ -10,13 +10,13 @@ namespace HW._09.Booking.com.Models
         public bool isWifi;
 
         public string Locality { get; set; }
-        public int Room { get; set; }
         public string Category { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
         public double Rating { get; set; }
+        public int Room { get; set; }
 
-        public Hotel(string locality, string category, string name, string address, double rating)
+        public Hotel(string locality, string category, string name, string address, double rating) // Конструктор для создания отеля или хостела.
         {
             Locality = locality;
             Category = category;
@@ -24,7 +24,7 @@ namespace HW._09.Booking.com.Models
             Address = address;
             Rating = rating;
         }
-        public Hotel(string locality, string address, int room, int guest, double rating, string category = "Апартаменты", string name = "")
+        public Hotel(string locality, string address, int room, int guest, double rating, string category = "Апартаменты", string name = "") // Конструктор для создания квартиры.
         {
             Locality = locality;
             Category = category;
@@ -39,7 +39,7 @@ namespace HW._09.Booking.com.Models
             if (string.Equals(Category, "Апартаменты"))
             return $"{Locality},{Category}, {Address}. Рейтинг - {Rating}, количество комнат - {Room}.";
                     else
-            return $"{Locality},{Category} {Name},  {Address}. Наш рейтинг - {Rating}.";
+            return $"{Locality},{Category} {Name}, {Address}. Наш рейтинг - {Rating}.";
         }
 
         public void AllIn()
@@ -53,6 +53,7 @@ namespace HW._09.Booking.com.Models
         public string PrintBonus()
         {
             string allInformation = string.Empty;
+
             if (isBreakfast)
                 allInformation += " \nХороший завтрак!";
             if (isFreeCancellationAvailable)

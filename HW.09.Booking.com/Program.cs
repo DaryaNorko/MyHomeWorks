@@ -20,6 +20,8 @@ namespace HW._09.Booking.com
             DateTime[] allNights;
             Person person = new();
 
+            var allApartments = CreateApartmentBase(); // Создание базы апартаментов.
+
             Console.WriteLine("Приветствуем Вас на сервисе booking.com! " +
                 "Напоминаем, что все апартаменты доступны для брони только до конца текущего месяца." +
                 "Для совершения бронирования необходимо пройти регистрацию. " +
@@ -56,24 +58,23 @@ namespace HW._09.Booking.com
                 Console.WriteLine("Введите количество детей");
                 child = int.Parse(Console.ReadLine());
 
-                var allApartments = CreateApartmentBase();
-
-                findingResults = SearchApartment(allApartments, userInputLocality, allNights, adult, child);
+                findingResults = SearchApartment(allApartments, userInputLocality, allNights, adult, child); // Поиск апартаметов и возвращение найденных результатов.
 
                 if (findingResults.Count == 0)
                 {
                     Console.WriteLine("По Вашему запросу ничего не найдено. Если желаете возобновить поиск, введите 1");
                     if (Console.ReadLine() == "1")
                         isSearch = true;
-                    else
+                    else 
                     {
                         Console.WriteLine("Будем рады видеть Вас снова! Всего доброго!");
-                        Environment.Exit(0);
+                        return;
                     }
                 }
-                else
+                else 
                 {
-                    PrintResultsOnConsole(findingResults, adult, child, numOfList, nightInHotel);
+                    PrintResultsOnConsole(findingResults, adult, child, numOfList, nightInHotel); // Выведение найденных результатов на консоль.
+                    isSearch = false;
                 }
             }
 
@@ -82,12 +83,13 @@ namespace HW._09.Booking.com
 
             if (Console.ReadLine() == "Да")
             {
-                findingResults = AddSearchFilters(findingResults);
+                findingResults = AddSearchFilters(findingResults); // Поиск с дополнительными фильтрами.
 
                 if (findingResults.Count == 0)
                 {
                     Console.WriteLine("По Вашему запросу ничего не найдено. Если желаете просмотреть предыдущие " +
                         "результаты поиска, введите 1. Если хотите выйти из Booking.com, введите 2.");
+
                     switch (Console.ReadLine())
                     {
                         case "1":
@@ -95,22 +97,48 @@ namespace HW._09.Booking.com
                             break;
                         case "2":
                             Console.WriteLine("Будем рады видеть Вас снова! Всего доброго!");
-                            Environment.Exit(0);
-                            break;
+                            return;
                         default:
                             Console.WriteLine("Было введено недопустимое значение.");
-                            Environment.Exit(0);
-                            break;
+                            return;
                     }
                 }
-                    // здесь остановить выполнение кода.
                 else
-                    PrintResultsOnConsole(findingResults, adult, child, numOfList, nightInHotel);
+                    PrintResultsOnConsole(findingResults, adult, child, numOfList, nightInHotel); // Выведение на консоль результатов поиска.
             }
            
-            Book(findingResults, isLogIn, person);
+            findingResults = Book(findingResults, isLogIn, person); // Бронирование.
 
+            person.PriceApartment = FindPrice(findingResults, adult, child, numOfList, nightInHotel); // Подсчёт цены. Детям скидка 25%.
 
+            Console.WriteLine($"Данные о бронировани: {person.hotel.ToString()} \n {person.bookApart.ToString()}. Цена:" +
+                $"{person.PriceApartment}. {person.ToString()}");
+
+            Console.WriteLine("\n Желаете оплатить бронирование? Введите Да или Нет.");
+
+            if (Console.ReadLine() == "Нет")
+            {
+                Console.WriteLine("Благодарим за использование нашего сервиса!");
+                return;
+            }
+            else
+                Purchase(person); // Оплата.
+        }
+
+        public static void Purchase(Person person)
+        {
+
+             Console.WriteLine("Введите номер платежной карты");
+             person.CardNumber = Console.ReadLine();
+               
+
+            if (person.Money < person.PriceApartment)
+                Console.WriteLine("На Вашей карте недостаточно средств.");
+            else
+            {
+                person.Money -= person.PriceApartment;
+                Console.WriteLine("Оплата прошла успешно. Благодарим за использование нашего сервиса.");
+            }                
         }
 
         public static bool LogIn(Person person, bool isLogIn)
@@ -127,13 +155,11 @@ namespace HW._09.Booking.com
             Console.WriteLine("Введите серию и номер паспорта");
             person.PassportDates = Console.ReadLine();
 
-            Console.WriteLine("Введите номер платежной карты");
-            person.CardNumber = Console.ReadLine();
-
             Console.WriteLine("Придумайте пароль");
             string password = Console.ReadLine();
 
             Console.WriteLine("Повторите пароль");
+
             if (password.Equals(Console.ReadLine()))
             {
                 person.Password = password;
@@ -148,7 +174,7 @@ namespace HW._09.Booking.com
             return isLogIn;
         }
 
-        public static void Book(List<Apartment> findingResults, bool isLogIn, Person person)
+        public static List<Apartment> Book(List<Apartment> findingResults, bool isLogIn, Person person)
         {
             Console.WriteLine("Введите номер результата апартаментов, которые Вы хотите забронировать.");
             
@@ -157,7 +183,7 @@ namespace HW._09.Booking.com
             while (!isLogIn)
             {
                 Console.WriteLine("Для завершения бронирования необходимо пройти регистрацию.");
-                LogIn(person, isLogIn);
+                isLogIn = LogIn(person, isLogIn);
             }
 
             Apartment[] findBookApart = findingResults.ToArray();
@@ -168,10 +194,14 @@ namespace HW._09.Booking.com
                 {
                     person.bookApart = findBookApart[i];
                     person.hotel = findBookApart[i].hotel;
+
+                    findingResults.Clear();
+                    findingResults.Add(person.bookApart);
                 }
-            }
-            
-            Console.WriteLine("Бронирование успешно завершено.");
+            }         
+            Console.WriteLine("Бронирование успешно завершено!");
+
+            return findingResults;
         }
 
         static void PrintResultsOnConsole(List<Apartment> findingResults, int adult, int child, int numOfList, int nightInHotel)
@@ -180,12 +210,14 @@ namespace HW._09.Booking.com
             foreach (var apart in findingResults)
             {
                 double priceForAllDays = FindPrice(findingResults, adult, child, numOfList, nightInHotel);
+
                 numOfList++;
                 apart.NumberOfApartment = numOfList;
-                Console.WriteLine($"Результат {numOfList}: \n {apart.hotel.ToString()}. {apart.ToString()}. Цена: {priceForAllDays} BYN");
 
+                Console.WriteLine($"Результат {numOfList}: \n {apart.hotel.ToString()} {apart.ToString()} Цена: {priceForAllDays} BYN");
             }
         }
+        
         public static List<Apartment> AddSearchFilters(List<Apartment> findingResults)
         {
             Console.WriteLine("Доступны следующие фильтры: \n 1 Бесплатный WiFi. 2 Бесплатная отмена бронирования. 3 Хороший завтрак." +
@@ -196,6 +228,7 @@ namespace HW._09.Booking.com
 
             string userChoice = Console.ReadLine();
             string[] userChoiceArray = userChoice.Split(',');
+
             for (int i = 0; i < userChoiceArray.Length; i++)
             {
                 switch (userChoiceArray[i])
@@ -238,33 +271,51 @@ namespace HW._09.Booking.com
                 }
             }
             return apartmentsWithFilters;
-
         }
-
         
         public static double FindPrice(List<Apartment> findingResults, int adult, int child, int numOfList, int nightInHotel)
         {
+            double priceForKids = 0.25;      // При бронировании номеров на сервисе детям предоставляется скидка 25%.
+
             Apartment [] findResultsArray = findingResults.ToArray();
 
-            double price = (adult * findResultsArray[numOfList].PricePerPerson + child * findResultsArray[numOfList].PricePerPerson * 0.25) * nightInHotel;
-            // При бронировании номеров на нашем сервисе детям предоставляется скидка 25%.
+            double price = (adult * findResultsArray[numOfList].PricePerPerson + child * findResultsArray[numOfList].PricePerPerson * priceForKids) * nightInHotel;
 
             return price;
         }
 
         public static DateTime[] FindUserNight(Person person)
         {
-            Console.WriteLine("Введите дату заезда в формате год.месяц.день. Например: 2000.10.6");
-            string userDate1 = (Console.ReadLine());
-            DateTime firstUserDate = new DateTime();
-            firstUserDate = DateTime.Parse(userDate1);
-            person.FirstDate = firstUserDate;
+            bool isCorrectDateInput = false;
 
-            Console.WriteLine("Введите дату выезда в формате год.месяц.день. Например: 2000.10.6");
-            string userDate2 = (Console.ReadLine());
-            DateTime lastUserDate = new DateTime();
-            lastUserDate = DateTime.Parse(userDate2);
-            person.LastDate = lastUserDate;
+            DateTime firstUserDate = new();
+            DateTime lastUserDate = new();
+
+            while (!isCorrectDateInput)
+            { 
+                Console.WriteLine("Введите дату заезда в формате год.месяц.день. Например: 2000.10.6");
+                string userDate1 = (Console.ReadLine());
+                firstUserDate = DateTime.Parse(userDate1);
+                person.FirstDate = firstUserDate;
+
+                if (firstUserDate < DateTime.Now)
+                    Console.WriteLine("Данная дата недоступна. Пожалуйста, выберите другую дату.");
+                else
+                    isCorrectDateInput = true;
+            }
+
+            while (isCorrectDateInput)
+            {            
+                Console.WriteLine("Введите дату выезда в формате год.месяц.день. Например: 2000.10.6");
+                string userDate2 = (Console.ReadLine());
+                lastUserDate = DateTime.Parse(userDate2);
+                person.LastDate = lastUserDate;
+
+                if (lastUserDate < DateTime.Now || lastUserDate < firstUserDate)
+                    Console.WriteLine("Данная дата недоступна. Пожалуйста, выберите другую дату.");
+                else
+                    isCorrectDateInput = false;
+            }
 
             int userNight = lastUserDate.Subtract(firstUserDate).Days;
             DateTime[] allNigths = new DateTime[userNight];
@@ -273,7 +324,6 @@ namespace HW._09.Booking.com
             {
                 allNigths[i] = firstUserDate.AddDays(i);
             }
-
             return allNigths;
         }
 
@@ -332,6 +382,7 @@ namespace HW._09.Booking.com
         {
             List<Apartment> apartmentsFoundsOnRequest = new List<Apartment>();
             int countUserNights = allNights.Length;
+
             for (int i = 0; i < allApartments.Length; i++) 
             {
                     DateTime[] freeDate = allApartments[i].freeDates;

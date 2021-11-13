@@ -4,7 +4,7 @@ namespace HW._09.Booking.com.Models
 {
     class Person
     {
-        Guid Id;
+        readonly Guid _id;
 
         public Apartment bookApart;
 
@@ -16,13 +16,13 @@ namespace HW._09.Booking.com.Models
         public DateTime FirstDate { get; set; }
         public DateTime LastDate { get; set; }
         public string Password { get; set; }
-        public string CardNumber { get; set; } = "1234 3456 3456 2345";
+        public string CardNumber { get; set; }
         public double Money { get; set; } = 1000;
         public double PriceApartment { get; set; }
 
         public Person()
         {
-            Guid Id = new Guid();
+            _id = new Guid();
         }
 
         public override string ToString()

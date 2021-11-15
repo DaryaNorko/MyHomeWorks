@@ -22,7 +22,7 @@ namespace HW._09.Booking.com.Models
 
         public Person()
         {
-            _id = new Guid();
+            _id = Guid.NewGuid();
         }
 
         public override string ToString()

@@ -30,18 +30,8 @@ namespace HW._14.Task1
 
                 string userAnswer = Console.ReadLine();
 
-                object action1;
-                bool isUserInputCorrect = Enum.TryParse(typeof(Actions), userAnswer, true, out action1);
                 Actions action;
-
-                if (isUserInputCorrect)
-                {
-                    action = (Actions)Enum.Parse(typeof(Actions), userAnswer, true);
-                }
-                else
-                {
-                    action = default;
-                }
+                bool isUserInputCorrect = Enum.TryParse(userAnswer, true, out action);
 
                 switch (action)
                 {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace HW._06.Task1
 {
@@ -7,14 +8,13 @@ namespace HW._06.Task1
         static void Main(string[] args)
         {
             Console.WriteLine("Пожалуйста, введите стихотворение в одну строку, разделяя строки точкой с запятой.");
-            string poem = Console.ReadLine();
+            string[] linesOfPoem = Console.ReadLine().Split(';');
 
-            poem = poem.Replace('о', 'а');
-            poem = poem.Replace('О', 'А');
-
-            string[] linesOfPoem = poem.Split(';');
+            linesOfPoem = linesOfPoem.Select(str => str.Replace('о', 'а')).ToArray();
+            linesOfPoem = linesOfPoem.Select(str => str.Replace('О', 'А')).ToArray();
 
             foreach (string line in linesOfPoem)
+
             {
                 Console.WriteLine(line);
             }

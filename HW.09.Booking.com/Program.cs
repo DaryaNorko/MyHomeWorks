@@ -1,6 +1,7 @@
 ﻿using HW._09.Booking.com.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HW._09.Booking.com
 {
@@ -268,6 +269,8 @@ namespace HW._09.Booking.com
                                 apartmentsWithFilters.Add(apartments[ind]);
                         }
                         break;
+                    default:
+                        break;
                 }
             }
             return apartmentsWithFilters;
@@ -380,25 +383,9 @@ namespace HW._09.Booking.com
 
         public static List<Apartment> SearchApartment(Apartment[] allApartments, string userInputLocality, DateTime[] allNights, int adult, int child)
         {
-            List<Apartment> apartmentsFoundsOnRequest = new List<Apartment>();
-            int countUserNights = allNights.Length;
+            List<Apartment> apartmentsFoundsOnRequest = allApartments.Where(apart => apart.hotel.Locality == userInputLocality && apart.Guest == (adult + child)).ToList();
+            apartmentsFoundsOnRequest = allApartments.Where(apart => Equals(apart.freeDates.Intersect(allNights),apart.freeDates)).ToList();
 
-            for (int i = 0; i < allApartments.Length; i++) 
-            {
-                    DateTime[] freeDate = allApartments[i].freeDates;
-                    for (int index = 0; index < freeDate.Length; index++)
-                    {               
-                            for (int night = 0; night < allNights.Length; night++)
-                            {
-                                if (freeDate[index] == allNights[night])
-                                    countUserNights--;
-                            } 
-                    }
-                if (countUserNights == 0 && allApartments[i].hotel.Locality == userInputLocality && allApartments[i].Guest == (adult + child))
-                {
-                    apartmentsFoundsOnRequest.Add(allApartments[i]);
-                }   
-            }           
             return apartmentsFoundsOnRequest;
         }
     }

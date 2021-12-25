@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace HW._08.Task3
 {
@@ -12,15 +14,12 @@ namespace HW._08.Task3
            
             Console.WriteLine(Travel(addresses, zipcode));
         }
-
         static string Travel(string addresses, string zipcode)
         {
             string newAddressFormat = new($"{zipcode}:");
-            string houseNumber = string.Empty;
-            string streetAndTown = string.Empty;
-            int IndexOfSpace;
+            string houseNumber;
+            string streetAndTown;
 
-            int addressCount = 0;
             string allHouseNumbers = string.Empty;
             string allStreetsAndTowns = string.Empty;            
 
@@ -29,29 +28,23 @@ namespace HW._08.Task3
             else
             {
                 string[] addressesArray = addresses.Split(',');
-                for (int i = 0; i < addressesArray.Length; )
+
+                IEnumerable <string> addressesFind = addressesArray.Where(address => address.Contains(zipcode))
+                    .Select(a => a.Replace(zipcode, "").Trim());
+
+                foreach (string address in addressesFind)
                 {
-                    if (addressesArray[i].Contains(zipcode))
+                    houseNumber = address.Substring(0, address.IndexOf(' '));
+                    allHouseNumbers += houseNumber;        
+                    
+                    streetAndTown = address.Replace(houseNumber, "").Trim();
+                    allStreetsAndTowns += streetAndTown;
+
+                    if (address != addressesFind.Last())
                     {
-                        addressesArray[i].Trim();
-                        IndexOfSpace = addressesArray[i].IndexOf(' ');
-                        houseNumber = addressesArray[i].Substring(0, IndexOfSpace);
-                        streetAndTown = addressesArray[i].Replace(zipcode, " ").Replace(houseNumber, " ").Trim();
-                        addressCount++;
+                        allHouseNumbers += ",";
+                        allStreetsAndTowns += ",";
                     }
-                    if (addressCount == 1)
-                    {
-                        allHouseNumbers = houseNumber;
-                        allStreetsAndTowns = streetAndTown;
-                        i++;
-                    }
-                    else if (addressCount > 1&& addressesArray[i].Contains(zipcode))
-                    {
-                        allHouseNumbers = allHouseNumbers + "," + houseNumber;
-                        allStreetsAndTowns = allStreetsAndTowns + "," + streetAndTown;
-                        i++;
-                    }
-                    else i++;
                 }
                 newAddressFormat += allStreetsAndTowns + "/" + allHouseNumbers;             
             }

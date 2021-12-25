@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace HW._06.Task2
 {
@@ -16,69 +17,33 @@ namespace HW._06.Task2
             Console.WriteLine();
             Console.WriteLine(SortArray(stringWords));
         }
-
         static string findAndRemoveLongestWord(string stringWords)
         {
             string[] stringArray = stringWords.Split(' ');
-            string longestWord = string.Empty;
 
-            for (int i = 0; i < stringArray.Length; i++)
-            {
-                string checkString = stringArray[i];
-                if (checkString.Length > longestWord.Length)
-                    longestWord = stringArray[i];
-            }
-            for (int i = 0; i < stringArray.Length; i++)
-            {
-                string checkString = stringArray[i];
-                if (checkString.Length == longestWord.Length && checkString != longestWord)
-                    stringArray[i] = string.Empty;
-            }
+            string longestWord = stringArray.OrderByDescending(word => word.Length).First();
+            stringArray = stringArray.Where(word => word.Length < longestWord.Length).ToArray();
 
             stringWords = String.Join(' ', stringArray);
-
-            int indexOfLongestWord = stringWords.IndexOf(longestWord);
-            stringWords = stringWords.Remove(indexOfLongestWord, longestWord.Length);
 
             return stringWords;
         }
-
         static string ReplaceWords(string stringWords)
         {
             string[] stringArray = stringWords.Split(' ');
-            string longestWord = string.Empty;
 
-            for (int i = 0; i < stringArray.Length; i++)
-            {
-                string checkString = stringArray[i];
-                if (checkString.Length > longestWord.Length)
-                    longestWord = stringArray[i];
-            }
+            string longestWord = stringArray.OrderByDescending(word => word.Length).First();
+            string shortestWord = stringArray.OrderBy(word => word.Length).First();
 
-            string shortestWord = string.Empty;
-            for (int i = 0; i < stringArray.Length; i++)
-            {
-                string checkString = stringArray[i];
-                if (checkString.Length < longestWord.Length)
-                    shortestWord = stringArray[i];
-            }
-
-            for (int i = 0; i < stringArray.Length; i++)
-            {
-                string checkString = stringArray[i];
-                if (checkString.Length == longestWord.Length && checkString != longestWord)
-                    stringArray[i] = string.Empty;
-                else if (checkString.Length == shortestWord.Length && checkString != shortestWord)
-                    stringArray[i] = string.Empty;
-            }
-            stringWords = String.Join(' ', stringArray);
-
-            if (longestWord == shortestWord)
-            {
+            if (longestWord.Length == shortestWord.Length)
                 return "All words in a given string are the same length";
-            }
             else
             {
+                stringArray = stringArray.Where(word => word.Length < longestWord.Length || word.Equals(longestWord)).ToArray();
+                stringArray = stringArray.Where(word => word.Length > shortestWord.Length || word.Equals(shortestWord)).ToArray();
+
+                stringWords = String.Join(' ', stringArray);
+
                 int indexOfLongestWord = stringWords.IndexOf(longestWord);
                 int indexOfShortestWord = stringWords.IndexOf(shortestWord);
 
@@ -98,7 +63,6 @@ namespace HW._06.Task2
             }
             return stringWords;
         }
-
         static string LettersCount(string stringWords)
         {
             char[] allStringChars = stringWords.ToCharArray();
@@ -114,27 +78,14 @@ namespace HW._06.Task2
             }
             return $" The number of letters in the text = {letters}. \n The number of punctuation marks in the text = {punctuation}";
         }
-
         static string SortArray(string stringWords)
         {
             string[] stringArray = stringWords.Split(' ');
 
-            for (int i = 0; i < stringArray.Length; i++)
-            {
-                for (int y = 0; y < stringArray.Length-1; y++)
-                {
-                    string str1 = stringArray[y];
-                    string str2 = stringArray[y+1];
+            stringArray = stringArray.OrderByDescending(word => word.Length).ToArray();
 
-                    if (str1.Length < str2.Length)
-                    {
-                        string str3 = stringArray[y];
-                        stringArray[y] = stringArray[y+1];
-                        stringArray[y+1] = str3;
-                    }
-                }
-                stringWords = String.Join(' ', stringArray);
-            }
+            stringWords = String.Join(' ', stringArray);
+
             return stringWords;
         }
     }

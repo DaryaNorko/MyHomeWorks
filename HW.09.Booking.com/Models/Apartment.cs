@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace HW._09.Booking.com.Models
 {
@@ -37,24 +38,11 @@ namespace HW._09.Booking.com.Models
 
         private static DateTime [] CreateFreeDates()
         {
-
             DateTime[] freeDates = new DateTime[15];
             Random random = new();
 
-            int day;
-            int month;
-            int year;
+            freeDates = freeDates.Select(date => new DateTime(DateTime.Now.Year, DateTime.Now.Month, random.Next(1, 31))).ToArray();
 
-            for (int i = 0; i < freeDates.Length; i++)
-            {
-                DateTime dateNow = DateTime.Now;
-
-                day = random.Next(1, 31);
-                month = dateNow.Month;
-                year = dateNow.Year;
-
-                freeDates[i] = new DateTime(year, month, day);
-            }
             return freeDates;
         }
     }

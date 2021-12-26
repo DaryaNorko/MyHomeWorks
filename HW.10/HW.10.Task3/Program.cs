@@ -1,6 +1,7 @@
 ﻿using HW._10.Task3.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HW._10.Task3
 {
@@ -8,11 +9,11 @@ namespace HW._10.Task3
     {
         static void Main(string[] args)
         {
-            List<Engineer> engeneers = CreateEngineersList();
+            List<Engineer> engineers = CreateEngineersList();
 
             Console.WriteLine("Список обязанностей сотрудников.");
 
-            foreach (Engineer employee in engeneers)
+            foreach (Engineer employee in engineers)
             {
                 Console.WriteLine(employee.Title);
 
@@ -25,36 +26,21 @@ namespace HW._10.Task3
 
             Console.WriteLine("Список сотрудников (отсортирован по опыту работы).");
 
-            Engineer[] engineersArray = SortExperience(engeneers);
+            List <Engineer> engineersList= SortExperience(engineers);
 
-            foreach (Engineer engineer in engineersArray)
+            foreach (Engineer engineer in engineersList)
             {
                 Console.WriteLine($"\nCompany: {Engineer.company}, Full Name: {engineer.FirstName} {engineer.LastName}," +
                     $"Experience: {engineer.Experience}, Title - {engineer.Title}, Salary - {engineer.FindSalary()}$, " +
                     $"GitHub: {engineer.Github}");
             }            
         }
-
-        public static Engineer [] SortExperience( List <Engineer> engeneers)
+        public static List<Engineer> SortExperience( List <Engineer> engineers)
         {
-            Engineer[] engineersArray = engeneers.ToArray();
-            for (int i = 0; i < engineersArray.Length; i++)
-            {
-                for (int d = i+1; d < engineersArray.Length - 1; d++)
-                {
-                    Engineer eng;
-
-                    if (engineersArray[i].Experience > engineersArray[d].Experience)
-                    {
-                        eng = engineersArray[i];
-                        engineersArray[i] = engineersArray[d];
-                        engineersArray[d] = eng;
-                    }
-                }
-            }
-            return engineersArray;
-        }
-            
+            engineers = engineers.OrderByDescending(engineer => engineer.Experience).ToList();
+           
+            return engineers;
+        }           
         public static List<Engineer> CreateEngineersList()
         {
             JuniorDeveloper jun1 = new("Андрей", "Бабушкин", 1, "https://github.com/AndyBabushkin");
